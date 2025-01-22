@@ -1,6 +1,63 @@
 [package]
-name = "Replica"
+name = "replica-compiler"
 version = "0.1.0"
 edition = "2021"
+authors = ["Shota Shimazu <your.email@example.com>"]
+description = "Compiler for the Replica programming language"
 
 [dependencies]
+# LLVM bindings for Rust
+inkwell = { git = "https://github.com/TheDan64/inkwell", branch = "master", features = ["llvm14-0"] }
+
+# Parser combinators
+nom = "7.1"
+
+# Error handling and reporting
+miette = { version = "5.5", features = ["fancy"] }
+thiserror = "1.0"
+
+# Async runtime for compiler services
+tokio = { version = "1.28", features = ["full"] }
+
+# CLI argument parsing
+clap = { version = "4.2", features = ["derive"] }
+
+# Source code handling
+codespan-reporting = "0.11"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Hash maps and sets with better performance
+rustc-hash = "1.1"
+
+# Symbol interning
+string-interner = "0.14"
+
+# Testing support
+pretty_assertions = "1.3"
+
+[dev-dependencies]
+# Testing utilities
+criterion = "0.4"
+test-case = "3.1"
+insta = "1.29"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = 'abort'
+
+[profile.dev]
+debug = true
+opt-level = 0
+
+[[bin]]
+name = "replicac"
+path = "src/main.rs"
