@@ -1,0 +1,23 @@
+single actor Config {
+    let appName: String
+    let version: String
+
+    immediate init(appName: String, version: String) {
+        self.appName = appName
+        self.version = version
+    }
+
+    func copyToDistributed() -> DistributedConfig {
+        return DistributedConfig(appName: self.appName, version: self.version)
+    }
+}
+
+actor DistributedConfig {
+    let appName: String
+    let version: String
+
+    init(appName: String, version: String) {
+        self.appName = appName
+        self.version = version
+    }
+}

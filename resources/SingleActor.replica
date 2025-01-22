@@ -1,0 +1,11 @@
+single actor Logger {
+    let name: String
+
+    immediate init(name: String) {
+        self.name = name
+    }
+
+    func log(message: String) {
+        print("[\(name)] \(message)")
+    }
+}

@@ -1,0 +1,11 @@
+single actor Cache {
+    var data: [String: String] = [:]
+
+    func store(key: String, value: String) {
+        data[key] = value
+    }
+
+    func fetch(key: String) -> String? {
+        return data[key]
+    }
+}

@@ -1,0 +1,13 @@
+actor User {
+    let id: String
+    var name: String
+
+    immediate init(id: String, name: String) {
+        self.id = id
+        self.name = name
+    }
+
+    func updateName(newName: String) async {
+        self.name = newName
+    }
+}
