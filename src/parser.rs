@@ -143,7 +143,7 @@ impl Parser {
             None
         };
 
-        // メソッドボディの解析を追加
+        // Add method body parsing
         self.expect(Token::LBrace)?;
         let body = self.parse_method_body()?;
         self.expect(Token::RBrace)?;
