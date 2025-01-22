@@ -33,6 +33,11 @@ pub enum Token {
     Colon,
     Comma,
     Equals,
+    Plus,
+    Minus,
+    Multiply,
+    Divide,
+    Return,
 }
 
 fn keyword(input: &str) -> IResult<&str, Token> {
@@ -49,6 +54,7 @@ fn keyword(input: &str) -> IResult<&str, Token> {
         map(tag("copy"), |_| Token::Copy),
         map(tag("shared"), |_| Token::Shared),
         map(tag("init"), |_| Token::Init),
+        map(tag("return"), |_| Token::Return),
     ))(input)
 }
 
@@ -62,6 +68,10 @@ fn operator(input: &str) -> IResult<&str, Token> {
         map(char(':'), |_| Token::Colon),
         map(char(','), |_| Token::Comma),
         map(char('='), |_| Token::Equals),
+        map(char('+'), |_| Token::Plus),
+        map(char('-'), |_| Token::Minus),
+        map(char('*'), |_| Token::Multiply),
+        map(char('/'), |_| Token::Divide),
     ))(input)
 }
 

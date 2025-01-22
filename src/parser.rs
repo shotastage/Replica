@@ -143,6 +143,11 @@ impl Parser {
             None
         };
 
+        // メソッドボディの解析を追加
+        self.expect(Token::LBrace)?;
+        let body = self.parse_method_body()?;
+        self.expect(Token::RBrace)?;
+
         Ok(Method {
             name,
             is_async: true,
@@ -150,7 +155,90 @@ impl Parser {
             is_immediate,
             params,
             return_type,
+            body: Some(body),
         })
+    }
+
+    fn parse_method_body(&mut self) -> Result<MethodBody, ParseError> {
+        let mut statements = Vec::new();
+
+        while let Some(token) = self.peek() {
+            match token {
+                Token::RBrace => break,
+                Token::Return => {
+                    self.advance();
+                    let expr = self.parse_expression()?;
+                    statements.push(Statement::Return(expr));
+                }
+                _ => {
+                    let expr = self.parse_expression()?;
+                    statements.push(Statement::Expression(expr));
+                }
+            }
+        }
+
+        Ok(MethodBody { statements })
+    }
+
+    fn parse_expression(&mut self) -> Result<Expression, ParseError> {
+        self.parse_binary_expression()
+    }
+
+    fn parse_binary_expression(&mut self) -> Result<Expression, ParseError> {
+        let mut left = self.parse_primary()?;
+
+        while let Some(token) = self.peek() {
+            let operator = match token {
+                Token::Plus => Operator::Add,
+                Token::Minus => Operator::Subtract,
+                Token::Multiply => Operator::Multiply,
+                Token::Divide => Operator::Divide,
+                _ => break,
+            };
+            self.advance();
+
+            let right = self.parse_primary()?;
+            left = Expression::BinaryOp {
+                left: Box::new(left),
+                operator,
+                right: Box::new(right),
+            };
+        }
+
+        Ok(left)
+    }
+
+    fn parse_primary(&mut self) -> Result<Expression, ParseError> {
+        match self.advance() {
+            Some(Token::Identifier(name)) => Ok(Expression::Variable(name.clone())),
+            Some(Token::NumberLiteral(value)) => {
+                if value.contains('.') {
+                    Ok(Expression::Literal(LiteralValue::Float(
+                        value.parse().map_err(|_| ParseError::UnexpectedToken {
+                            expected: "float number",
+                            found: Token::NumberLiteral(value.clone()),
+                        })?,
+                    )))
+                } else {
+                    Ok(Expression::Literal(LiteralValue::Int(
+                        value.parse().map_err(|_| ParseError::UnexpectedToken {
+                            expected: "integer number",
+                            found: Token::NumberLiteral(value.clone()),
+                        })?,
+                    )))
+                }
+            }
+            Some(Token::LParen) => {
+                let expr = self.parse_expression()?;
+                self.expect(Token::RParen)?;
+                Ok(expr)
+            }
+            Some(token) => Err(ParseError::UnexpectedToken {
+                expected: "expression",
+                found: token.clone(),
+            }),
+            None => Err(ParseError::UnexpectedEOF),
+        }
     }
 
     fn parse_field(&mut self) -> Result<Field, ParseError> {

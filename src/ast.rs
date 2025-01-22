@@ -38,6 +38,7 @@ pub struct Method {
     pub is_immediate: bool,
     pub params: Vec<Parameter>,
     pub return_type: Option<Type>,
+    pub body: Option<MethodBody>,
 }
 
 #[derive(Debug)]
@@ -59,4 +60,42 @@ pub enum OwnershipType {
 pub struct OwnershipInfo {
     pub ownership_type: OwnershipType,
     pub is_mutable: bool,
+}
+
+#[derive(Debug)]
+pub enum Expression {
+    BinaryOp {
+        left: Box<Expression>,
+        operator: Operator,
+        right: Box<Expression>,
+    },
+    Literal(LiteralValue),
+    Variable(String),
+}
+
+#[derive(Debug)]
+pub enum Operator {
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+}
+
+#[derive(Debug)]
+pub enum LiteralValue {
+    Int(i32),
+    Float(f64),
+    String(String),
+    Bool(bool),
+}
+
+#[derive(Debug)]
+pub struct MethodBody {
+    pub statements: Vec<Statement>,
+}
+
+#[derive(Debug)]
+pub enum Statement {
+    Return(Expression),
+    Expression(Expression),
 }
