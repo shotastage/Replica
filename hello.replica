@@ -1,0 +1,12 @@
+// hello.replica
+actor Greeter {
+    let greeting: String
+
+    immediate init(greeting: String) {
+        self.greeting = greeting
+    }
+
+    func greet(name: String) -> String {
+        return "\(greeting), \(name)!"
+    }
+}
