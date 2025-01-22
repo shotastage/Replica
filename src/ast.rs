@@ -1,4 +1,21 @@
-// src/ast.rs
+#[derive(Debug, Clone)]
+pub enum Type {
+    Int,
+    Float,
+    String,
+    Bool,
+    Custom(String),
+    Array(Box<Type>),
+    Optional(Box<Type>),
+}
+
+#[derive(Debug)]
+pub struct Parameter {
+    pub name: String,
+    pub param_type: Type,
+    pub ownership: OwnershipType,
+}
+
 #[derive(Debug)]
 pub enum ActorType {
     Distributed,
@@ -31,10 +48,15 @@ pub struct Field {
     pub ownership: OwnershipType,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum OwnershipType {
     Owned,
     Moved,
     Shared,
     Copied,
+}
+
+pub struct OwnershipInfo {
+    pub ownership_type: OwnershipType,
+    pub is_mutable: bool,
 }
