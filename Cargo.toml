@@ -37,10 +37,10 @@ serde_json = "1.0"
 rustc-hash = "1.1"
 
 # Symbol interning
-string-interner = "0.14"
+string-interner = "0.18"
 
 # Testing support
-pretty_assertions = "1.3"
+pretty_assertions = "1.4.1"
 
 [dev-dependencies]
 # Testing utilities
