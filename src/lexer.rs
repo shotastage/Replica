@@ -103,6 +103,7 @@ fn number_literal(input: &str) -> IResult<&str, Token> {
 }
 
 fn token(input: &str) -> IResult<&str, Token> {
+    println!("Tokenizing input: \n{}", input); // Debugging output
     alt((
         keyword,
         operator,
