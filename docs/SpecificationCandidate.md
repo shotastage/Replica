@@ -1,6 +1,6 @@
 # Replica Language
 
-## 1. Basic Language Design
+# 1. Basic Language Design
 
 - Swift/Java-like object-oriented syntax
 - All objects are actors, no classes needed
@@ -10,7 +10,25 @@
 - Distributed data management (distributed var)
 - Efficient execution on WebAssembly
 
-## 2. Basic Syntax
+# 2. Primitive Types
+
+Replica has the following primitive types:
+
+- `Bool`: Boolean type
+- `Int`: Integer type
+- `Double`: Floating-point type 64-bit
+- `String`: String type
+
+## Advanced Types
+
+- `Array`: Array type
+- `Dictionary`: Dictionary type
+- `Set`: Set type
+- `Tuple`: Tuple type
+- `Optional`: Optional type
+- `Result`: Result type
+
+# 2. Basic Syntax
 
 Replica has syntax similar to object-oriented languages like Swift and Java. The basic writing style is very similar, making it easy for programmers familiar with these languages to write code.
 
@@ -29,7 +47,7 @@ actor User {
 }
 ```
 
-## 3. Actor Model
+# 3. Actor Model
 What makes Replica significantly different from other object-oriented languages is that it makes the actor model standard. There is no class syntax common in typical programming languages, and all objects are treated as asynchronous actors by default.
 This approach adopts a complete actor model, making it very suitable for distributed system design. In particular, it has major benefits in terms of asynchronicity, parallelism, and ease of distributed data processing.
 
