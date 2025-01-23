@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::ast::OwnershipInfo;
+use std::collections::HashMap;
 
 pub struct OwnershipChecker {
     symbol_table: HashMap<String, OwnershipInfo>,

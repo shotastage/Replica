@@ -1,16 +1,23 @@
+use crate::codegen::CodeGenError;
 use inkwell::context::Context;
 use std::fs;
 use std::path::Path;
 use std::process;
 
-mod lexer;
-mod parser;
 mod ast;
-mod semantic;
 mod codegen;
+mod lexer;
 mod ownership;
+mod parser;
+mod semantic;
 
 use crate::semantic::SemanticAnalyzer;
+
+impl From<CodeGenError> for String {
+    fn from(error: CodeGenError) -> String {
+        error.to_string()
+    }
+}
 
 fn compile_file(source_path: &Path) -> Result<Vec<u8>, String> {
     // Read source file
@@ -18,17 +25,18 @@ fn compile_file(source_path: &Path) -> Result<Vec<u8>, String> {
         .map_err(|e| format!("Failed to read source file: {}", e))?;
 
     // Lexical analysis
-    let (_, tokens) = lexer::lex(&source)
-        .map_err(|e| format!("Lexer error: {}", e))?;
+    let (_, tokens) = lexer::lex(&source).map_err(|e| format!("Lexer error: {}", e))?;
 
     // Parsing
     let mut parser = parser::Parser::new(tokens);
-    let ast = parser.parse_actor()
+    let ast = parser
+        .parse_actor()
         .map_err(|e| format!("Parser error: {}", e))?;
 
     // Semantic analysis
     let mut analyzer = SemanticAnalyzer::new();
-    analyzer.analyze_actor(&ast)
+    analyzer
+        .analyze_actor(&ast)
         .map_err(|e| format!("Semantic analysis error: {}", e))?;
 
     // Code generation
@@ -38,12 +46,16 @@ fn compile_file(source_path: &Path) -> Result<Vec<u8>, String> {
         .and_then(|s| s.to_str())
         .unwrap_or("module");
 
-    let mut code_gen = codegen::CodeGenerator::new(&context, module_name);
-    code_gen.compile_actor(&ast)
+    let mut code_gen =
+        codegen::CodeGenerator::new(&context, module_name, codegen::CodeGenOptions::default())?;
+
+    code_gen
+        .compile_actor(&ast)
         .map_err(|e| format!("Code generation error: {}", e))?;
 
     // Emit WASM
-    code_gen.emit_wasm()
+    code_gen
+        .emit_wasm()
         .map_err(|e| format!("WASM emission error: {}", e))
 }
 
@@ -57,7 +69,11 @@ fn main() {
     let input_path = Path::new(&args[1]);
     let output_path = Path::new(&args[2]);
 
-    println!("Compiling {} to {}", input_path.display(), output_path.display());
+    println!(
+        "Compiling {} to {}",
+        input_path.display(),
+        output_path.display()
+    );
 
     // Compile the source file
     match compile_file(input_path) {

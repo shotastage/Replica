@@ -87,10 +87,7 @@ fn identifier(input: &str) -> IResult<&str, Token> {
 
 fn string_literal(input: &str) -> IResult<&str, Token> {
     map(
-        preceded(
-            char('"'),
-            terminated(take_while1(|c| c != '"'), char('"')),
-        ),
+        preceded(char('"'), terminated(take_while1(|c| c != '"'), char('"'))),
         |s: &str| Token::StringLiteral(s.to_string()),
     )(input)
 }

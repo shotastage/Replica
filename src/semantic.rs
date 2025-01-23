@@ -106,7 +106,11 @@ impl SemanticAnalyzer {
 
     fn analyze_expression(&self, expr: &Expression) -> Result<Type, SemanticError> {
         match expr {
-            Expression::BinaryOp { left, operator, right } => {
+            Expression::BinaryOp {
+                left,
+                operator,
+                right,
+            } => {
                 let left_type = self.analyze_expression(left)?;
                 let right_type = self.analyze_expression(right)?;
 
@@ -123,14 +127,12 @@ impl SemanticAnalyzer {
                         }
                     }
                 }
-            },
-            Expression::Literal(value) => {
-                match value {
-                    LiteralValue::Int(_) => Ok(Type::Int),
-                    LiteralValue::Float(_) => Ok(Type::Float),
-                    LiteralValue::String(_) => Ok(Type::String),
-                    LiteralValue::Bool(_) => Ok(Type::Bool),
-                }
+            }
+            Expression::Literal(value) => match value {
+                LiteralValue::Int(_) => Ok(Type::Int),
+                LiteralValue::Float(_) => Ok(Type::Float),
+                LiteralValue::String(_) => Ok(Type::String),
+                LiteralValue::Bool(_) => Ok(Type::Bool),
             },
             Expression::Variable(name) => {
                 // 変数の型を現在のスコープから探す
@@ -140,12 +142,15 @@ impl SemanticAnalyzer {
                     }
                 }
                 Err(SemanticError::UndefinedVariable(name.clone()))
-            },
+            }
         }
     }
 
-    fn analyze_statement(&mut self, stmt: &Statement, expected_return_type: &Option<Type>)
-                         -> Result<(), SemanticError> {
+    fn analyze_statement(
+        &mut self,
+        stmt: &Statement,
+        expected_return_type: &Option<Type>,
+    ) -> Result<(), SemanticError> {
         match stmt {
             Statement::Return(expr) => {
                 let expr_type = self.analyze_expression(expr)?;
@@ -158,11 +163,11 @@ impl SemanticAnalyzer {
                     }
                 }
                 Ok(())
-            },
+            }
             Statement::Expression(expr) => {
                 self.analyze_expression(expr)?;
                 Ok(())
-            },
+            }
         }
     }
 
@@ -176,7 +181,9 @@ impl SemanticAnalyzer {
 
         // パラメータをスコープに追加
         for param in &method.params {
-            self.current_scope.last_mut().unwrap()
+            self.current_scope
+                .last_mut()
+                .unwrap()
                 .insert(param.name.clone(), param.param_type.clone());
         }
 
@@ -246,7 +253,8 @@ impl SemanticAnalyzer {
             Type::Custom(name) => {
                 if !self.type_environment.contains_key(name) {
                     return Err(SemanticError::TypeError(format!(
-                        "Unknown return type {}", name
+                        "Unknown return type {}",
+                        name
                     )));
                 }
             }
@@ -317,10 +325,7 @@ mod tests {
     #[test]
     fn test_optional_type_compatibility() {
         let analyzer = SemanticAnalyzer::new();
-        assert!(analyzer.check_type_compatibility(
-            &Type::Optional(Box::new(Type::Int)),
-            &Type::Int
-        ));
+        assert!(analyzer.check_type_compatibility(&Type::Optional(Box::new(Type::Int)), &Type::Int));
         assert!(analyzer.check_type_compatibility(
             &Type::Optional(Box::new(Type::Int)),
             &Type::Optional(Box::new(Type::Int))

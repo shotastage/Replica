@@ -20,10 +20,7 @@ pub struct Parser {
 
 impl Parser {
     pub fn new(tokens: Vec<Token>) -> Self {
-        Parser {
-            tokens,
-            current: 0,
-        }
+        Parser { tokens, current: 0 }
     }
 
     fn peek(&self) -> Option<&Token> {
@@ -285,21 +282,17 @@ impl Parser {
 
     fn parse_type(&mut self) -> Result<Type, ParseError> {
         match self.advance() {
-            Some(Token::Identifier(type_name)) => {
-                match type_name.as_str() {
-                    "Int" => Ok(Type::Int),
-                    "Float" => Ok(Type::Float),
-                    "String" => Ok(Type::String),
-                    "Bool" => Ok(Type::Bool),
-                    _ => Ok(Type::Custom(type_name.clone())),
-                }
-            }
-            Some(token) => {
-                Err(ParseError::UnexpectedToken {
-                    expected: "type",
-                    found: token.clone(),
-                })
-            }
+            Some(Token::Identifier(type_name)) => match type_name.as_str() {
+                "Int" => Ok(Type::Int),
+                "Float" => Ok(Type::Float),
+                "String" => Ok(Type::String),
+                "Bool" => Ok(Type::Bool),
+                _ => Ok(Type::Custom(type_name.clone())),
+            },
+            Some(token) => Err(ParseError::UnexpectedToken {
+                expected: "type",
+                found: token.clone(),
+            }),
             None => Err(ParseError::UnexpectedEOF),
         }
     }
