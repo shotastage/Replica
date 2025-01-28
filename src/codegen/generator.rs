@@ -4,7 +4,7 @@ use inkwell::{
     module::Module,
     targets::{CodeModel, FileType, InitializationConfig, RelocMode, Target, TargetTriple},
     types::BasicType,
-    values::{BasicValueEnum, FunctionValue},
+    values::FunctionValue,
     OptimizationLevel,
 };
 

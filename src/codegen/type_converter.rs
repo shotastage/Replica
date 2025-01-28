@@ -39,7 +39,6 @@ impl<'ctx> TypeConverter<'ctx> {
                 // 文字列は文字配列へのポインタとして扱う
                 Ok(self
                     .context
-                    .i8_type()
                     .ptr_type(AddressSpace::default())
                     .as_basic_type_enum())
             }
@@ -48,9 +47,8 @@ impl<'ctx> TypeConverter<'ctx> {
             Type::Array(element_type) => {
                 // 配列は要素型へのポインタとして実装
                 let elem_type = self.convert_to_llvm(element_type)?;
-                Ok(elem_type
-                    .ptr_type(AddressSpace::default())
-                    .as_basic_type_enum())
+                let pointer_type = self.context.ptr_type(AddressSpace::default());
+                Ok(pointer_type.as_basic_type_enum())
             }
             Type::Optional(inner_type) => {
                 // Optional型は内部型とbooleanフラグの構造体として実装
@@ -74,7 +72,6 @@ impl<'ctx> TypeConverter<'ctx> {
                 // 空文字列のための定数を作成
                 Ok(self
                     .context
-                    .i8_type()
                     .ptr_type(AddressSpace::default())
                     .const_null()
                     .as_basic_value_enum())
@@ -84,7 +81,6 @@ impl<'ctx> TypeConverter<'ctx> {
                 // null ポインタを返す
                 Ok(self
                     .context
-                    .i8_type()
                     .ptr_type(AddressSpace::default())
                     .const_null()
                     .as_basic_value_enum())
